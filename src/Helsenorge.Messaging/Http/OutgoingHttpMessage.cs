@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace Helsenorge.Messaging.Http
 {
-    internal class HttpMessage : IMessagingMessage
+    internal class OutgoingHttpMessage : IMessagingMessage
     {
         public XDocument Payload { get; set; }
         public byte[] BinaryPayload { get; set; }
@@ -22,13 +22,7 @@ namespace Helsenorge.Messaging.Http
 
         public string CpaId { get; set; }
 
-        public DateTime EnqueuedTimeUtc
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public DateTime EnqueuedTimeUtc { get; set; }
 
         public DateTime ExpiresAtUtc
         {
@@ -99,7 +93,7 @@ namespace Helsenorge.Messaging.Http
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            
         }
     }
 

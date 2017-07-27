@@ -16,12 +16,13 @@ namespace Helsenorge.Messaging.Http
         }
         public IMessagingReceiver CreateMessageReceiver(string id)
         {
-            throw new NotImplementedException();
-            //return new ServiceBusReceiver(_implementation.CreateMessageReceiver(id, ReceiveMode.PeekLock));
+            // id example '95218_async'
+            return new HttpServiceBusReceiver(_baseurl, id);
         }
         public IMessagingSender CreateMessageSender(string id)
         {
-            return new HttpServiceBusSender(_baseurl); //TODO Add something for sender
+            // id sample value '95218_async'
+            return new HttpServiceBusSender(_baseurl, id);
         }
         bool ICachedMessagingEntity.IsClosed => false;
         void ICachedMessagingEntity.Close() {
@@ -33,7 +34,7 @@ namespace Helsenorge.Messaging.Http
 
             var memoryStream = new MemoryStream();
             stream.CopyTo(memoryStream);
-            return new HttpMessage { Payload = outgoingMessage.Payload, BinaryPayload = memoryStream.ToArray() };
+            return new OutgoingHttpMessage { Payload = outgoingMessage.Payload, BinaryPayload = memoryStream.ToArray() };
         }
     }
 

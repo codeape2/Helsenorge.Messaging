@@ -13,10 +13,12 @@ namespace Helsenorge.Messaging.Http
     public class HttpServiceBusSender : IMessagingSender
     {
         private string _url;
+        private string _id;
 
-        public HttpServiceBusSender(string url)
+        public HttpServiceBusSender(string url, string id)
         {
             _url = url;
+            _id = id;
         }
 
         public bool IsClosed => false;
@@ -28,13 +30,13 @@ namespace Helsenorge.Messaging.Http
 
         public async Task SendAsync(IMessagingMessage message)
         {
-            Debug.Assert(message is HttpMessage);
+            Debug.Assert(message is OutgoingHttpMessage);
             var httpClient = new HttpClient();
-            var response = await httpClient.PostAsync(_url, new StringContent(CreateHttpBody((HttpMessage)message).ToString()));
+            var response = await httpClient.PostAsync(new Uri(new Uri(_url), _id), new StringContent(CreateHttpBody((OutgoingHttpMessage)message).ToString()));
             response.EnsureSuccessStatusCode();
         }
 
-        private XElement CreateHttpBody(HttpMessage message)
+        private XElement CreateHttpBody(OutgoingHttpMessage message)
         {
             Debug.Assert(message != null);
             Debug.Assert(message.Payload != null);
