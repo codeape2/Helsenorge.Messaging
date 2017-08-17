@@ -29,6 +29,7 @@ namespace Helsenorge.Messaging.Http
         }
         public IMessagingMessage CreteMessage(Stream stream, OutgoingMessage outgoingMessage)
         {
+            //TODO: Fix typo
             Debug.Assert(stream != null);
             Debug.Assert(outgoingMessage != null);
 

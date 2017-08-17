@@ -1,13 +1,15 @@
 ﻿using Helsenorge.Messaging.Abstractions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Helsenorge.Messaging.Http
 {
-    internal class OutgoingHttpMessage : IMessagingMessage
+    //TODO: Add creator and parser for these types (OHM -> XElement and XElement -> IHM)
+    public class OutgoingHttpMessage : IMessagingMessage
     {
         public XDocument Payload { get; set; }
         public byte[] BinaryPayload { get; set; }
@@ -95,6 +97,48 @@ namespace Helsenorge.Messaging.Http
         {
             
         }
+
+        public XElement CreateHttpBody()
+        {
+            var payloadElement = new XElement("Payload");
+            if (Payload != null && Payload.Root != null)
+            {
+                payloadElement.Add(Payload.Root);
+            }
+            else
+            {
+                payloadElement.Value = "#WARNING: No payload";
+            }
+
+            var binaryPayloadElement = new XElement("BinaryPayload");
+            if (BinaryPayload != null)
+            {
+                binaryPayloadElement.Value = Convert.ToBase64String(BinaryPayload);
+            }
+            else
+            {
+                binaryPayloadElement.Value = "#WARNING: No binary payload";
+            }
+
+            return new XElement("AMQPMessage",
+                payloadElement,
+                binaryPayloadElement,
+                new XElement("ApplicationTimestamp", ApplicationTimestamp),
+                new XElement("ContentType", ContentType),
+                new XElement("CorrelationId", CorrelationId),
+                new XElement("CpaId", CpaId),
+                new XElement("EnqueuedTimeUtc", EnqueuedTimeUtc),
+                new XElement("ScheduledEnqueueTimeUtc", ScheduledEnqueueTimeUtc),
+                new XElement("TimeToLive", TimeToLive.ToString()),
+                new XElement("To", To),
+                new XElement("ToHerId", ToHerId),
+                new XElement("FromHerId", FromHerId),
+                new XElement("MessageFunction", MessageFunction),
+                new XElement("MessageId", MessageId),
+                new XElement("ReplyTo", ReplyTo)
+            );
+        }
+
     }
 
 }

@@ -29,11 +29,9 @@ namespace Helsenorge.Messaging.Http
 
         public async Task<IMessagingMessage> ReceiveAsync(TimeSpan serverWaitTime)
         {
-            Console.Error.WriteLine("ReceiveAsync");
             var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(new Uri(new Uri(_url), _id));
-            var responseString = await response.Content.ReadAsStringAsync();
-            if (responseString == "")
+            var response = await httpClient.GetAsync(new Uri(new Uri(_url), _id));            
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
                 await Task.Delay(serverWaitTime);
                 return null;
@@ -41,6 +39,7 @@ namespace Helsenorge.Messaging.Http
             else
             {
                 await Task.Delay(serverWaitTime);
+                var responseString = await response.Content.ReadAsStringAsync();
                 return new IncomingHttpMessage
                 {
                     AMQPMessage = XDocument.Parse(responseString),

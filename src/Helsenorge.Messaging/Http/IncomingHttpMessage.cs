@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -10,6 +11,7 @@ namespace Helsenorge.Messaging.Http
     internal class IncomingHttpMessage : IMessagingMessage
     {
         public XDocument AMQPMessage { get; set; }
+        //TODO: Rename all GetAMQPxxx to GetValue from XMLAMQPMessage or similar
         private string GetAMQPMessageField(string name)
         {
             return GetAMQPMessageFieldElement(name).Value;
@@ -17,7 +19,7 @@ namespace Helsenorge.Messaging.Http
 
         private XElement GetAMQPMessageFieldElement(string name) //TODO: Return single child
         {
-            var element = AMQPMessage.Root.Element(name);
+            var element = AMQPMessage.Root.Elements(name).SingleOrDefault();
             if (element == null)
             {
                 throw new ArgumentException($"Cannot find message field named '{name}'");
@@ -58,7 +60,8 @@ namespace Helsenorge.Messaging.Http
         {
             get
             {
-                throw new NotImplementedException();
+                //TODO: Is this reasonable?
+                return DateTime.Now + TimeSpan.FromMinutes(5);
             }
         }
 
@@ -82,7 +85,14 @@ namespace Helsenorge.Messaging.Http
         }
 
 
-        public string CorrelationId { get; set; }
+        public string CorrelationId
+        {
+            get
+            {
+                return GetAMQPMessageField("CorrelationId");
+            }
+            set { throw new NotImplementedException(); }
+        }
 
         public string MessageFunction
         {
@@ -93,9 +103,13 @@ namespace Helsenorge.Messaging.Http
             set { throw new NotImplementedException(); }
         }
 
+        
+        public string MessageId {
+            get => GetAMQPMessageField("MessageId");
+            set => throw new NotImplementedException();
+        }
 
-        public string MessageId { get; set; }
-
+        //TODO: Other fields should also be parsed
         public string ReplyTo { get; set; }
 
         public DateTime ScheduledEnqueueTimeUtc { get; set; }
@@ -132,8 +146,11 @@ namespace Helsenorge.Messaging.Http
             var memoryStream = new MemoryStream();
             if (ContentType == "text/plain") // ... or SOAP
             {
+                var reader = GetAMQPMessageFieldElement("Payload").CreateReader();
+                reader.MoveToContent();
+
                 var writer = new StreamWriter(memoryStream);
-                writer.Write(GetAMQPMessageFieldElement("Payload").ToString());
+                writer.Write(reader.ReadInnerXml());
                 writer.Flush();            
             }
             else
@@ -146,7 +163,7 @@ namespace Helsenorge.Messaging.Http
 
         public void AddDetailsToException(Exception ex)
         {
-            throw new NotImplementedException();
+            // Do nothing
         }
 
         public void Dispose()
