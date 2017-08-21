@@ -42,8 +42,7 @@ namespace Helsenorge.Messaging.Http
                 var responseString = await response.Content.ReadAsStringAsync();
                 return new IncomingHttpMessage
                 {
-                    AMQPMessage = XDocument.Parse(responseString),
-                    EnqueuedTimeUtc = DateTime.Now //TODO: Should be parsed?
+                    AMQPMessage = XElement.Parse(responseString)
                 };
             }            
         }
