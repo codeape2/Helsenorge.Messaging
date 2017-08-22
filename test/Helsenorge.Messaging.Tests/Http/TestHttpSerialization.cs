@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Helsenorge.Messaging.Http;
 using System.Xml.Linq;
 using System.Linq;
+using System.Globalization;
 
 namespace Helsenorge.Messaging.Tests.Http
 {
@@ -73,12 +74,49 @@ namespace Helsenorge.Messaging.Tests.Http
             Assert.AreEqual(456, incomingMessage.ToHerId);
         }
 
-        //TODO: Check parsing of datetime styles:
-        /*
-         * 2017-08-18T10:13:59.0621301+02:00
-2017-08-18T10:13:59.0621301
-2017-08-18T10:13:59.0621301Z
-*/
+        [TestMethod]
+        public void ExploreDateTimeKinds()
+        {
+            var now = DateTime.Now;
+            Assert.AreEqual(DateTimeKind.Local, now.Kind);
+
+            var utcnow = DateTime.UtcNow;
+            Assert.AreEqual(DateTimeKind.Utc, utcnow.Kind);
+        }
+
+        [TestMethod]
+        public void ExploreXmlSerializationOfDateTimes()
+        {
+            var local = new DateTime(2017, 1, 1, 13, 10, 30, DateTimeKind.Local);
+            Assert.AreEqual("2017-01-01T13:10:30+01:00", SerializeDateTimeUsingXElement(local));
+
+            var utc = new DateTime(2017, 1, 1, 13, 10, 30, DateTimeKind.Utc);
+            Assert.AreEqual("2017-01-01T13:10:30Z", SerializeDateTimeUsingXElement(utc));
+
+            var unspecified = new DateTime(2017, 1, 1, 13, 10, 30, DateTimeKind.Unspecified);
+            Assert.AreEqual("2017-01-01T13:10:30", SerializeDateTimeUsingXElement(unspecified));
+        }
+
+        [TestMethod]
+        public void ExploreXmlDeserializationOfDateTimes()
+        {
+            var local = Parse("2017-01-01T13:10:30+01:00");
+            Assert.AreEqual(DateTimeKind.Local, local.Kind);
+            Assert.AreEqual(new DateTime(2017, 1, 1, 13, 10, 30, DateTimeKind.Local), local);
+
+            var utc = Parse("2017-01-01T13:10:30Z");
+            Assert.AreEqual(DateTimeKind.Utc, utc.Kind);
+            Assert.AreEqual(new DateTime(2017, 1, 1, 13, 10, 30, DateTimeKind.Utc), utc);
+
+            var unspecified = Parse("2017-01-01T13:10:30");
+            Assert.AreEqual(DateTimeKind.Unspecified, unspecified.Kind);
+            Assert.AreEqual(new DateTime(2017, 1, 1, 13, 10, 30, DateTimeKind.Unspecified), unspecified);
+        }
+
+        DateTime Parse(string s) => DateTime.Parse(s, null, DateTimeStyles.RoundtripKind);
+
+        string SerializeDateTimeUsingXElement(DateTime dt) => new XElement("foo", dt).Value;
+
 
         private XElement AssertContains(XElement parent, string elementname)
         {
