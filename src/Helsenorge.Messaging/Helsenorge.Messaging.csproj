@@ -172,6 +172,7 @@
     <Compile Include="ServiceBus\ServiceBusLoggingExtensions.cs" />
     <Compile Include="ServiceBus\ServiceBusSenderPool.cs" />
     <Compile Include="StringFormatConstants.cs" />
+    <Compile Include="SyncExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Helsenorge.Registries\Helsenorge.Registries.csproj">
