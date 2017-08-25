@@ -41,7 +41,7 @@ namespace Helsenorge.Messaging.ServiceBus.Senders
 
 		public async Task<XDocument> SendAsync(ILogger logger, OutgoingMessage message)
 		{
-			await _core.Send(logger, message, QueueType.Synchronous, _core.Settings.Synchronous.FindReplyQueueForMe()).ConfigureAwait(false);
+			await _core.Send(logger, message, QueueType.Synchronous, _core.Settings.Synchronous.FindReplyQueueForMe());
 
 			var listener = new SynchronousReplyListener(_core, logger, this);
 			var start = DateTime.UtcNow;
@@ -74,7 +74,7 @@ namespace Helsenorge.Messaging.ServiceBus.Senders
 					return payload;
 				}
 
-				var incomingMessage = await listener.ReadAndProcessMessage(true).ConfigureAwait(false);
+				var incomingMessage = await listener.ReadAndProcessMessage(true);
 				if (incomingMessage != null)
 				{
 					// see if this is a message we are waiting for

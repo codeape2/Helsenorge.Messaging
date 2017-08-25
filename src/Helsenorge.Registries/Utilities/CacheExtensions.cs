@@ -32,7 +32,7 @@ namespace Helsenorge.Registries.Utilities
 			options.SetAbsoluteExpiration(expires);
 			try
 			{
-				await cache.SetAsync(key, ObjectToByteArray(value), options).ConfigureAwait(false);
+				await cache.SetAsync(key, ObjectToByteArray(value), options);
 			}
 			catch (Exception ex)
 			{	

@@ -40,12 +40,12 @@ namespace Helsenorge.Messaging
 		/// <returns></returns>
 		public async Task SendAndContinueAsync(ILogger logger, OutgoingMessage message)
 		{
-            var collaborationProtocolMessage = await PreCheck(logger, message).ConfigureAwait(false);
+            var collaborationProtocolMessage = await PreCheck(logger, message);
 
             switch (collaborationProtocolMessage.DeliveryProtocol)
             {
 				case DeliveryProtocol.Amqp:
-					await _asynchronousServiceBusSender.SendAsync(logger, message).ConfigureAwait(false);
+					await _asynchronousServiceBusSender.SendAsync(logger, message);
 					return;
 				case DeliveryProtocol.Unknown:
 				default:
@@ -64,12 +64,12 @@ namespace Helsenorge.Messaging
 		/// <returns>The received XML</returns>
 		public async Task<XDocument> SendAndWaitAsync(ILogger logger, OutgoingMessage message)
 		{
-            var collaborationProtocolMessage = await PreCheck(logger, message).ConfigureAwait(false);
+            var collaborationProtocolMessage = await PreCheck(logger, message);
            
             switch (collaborationProtocolMessage.DeliveryProtocol)
             {
 				case DeliveryProtocol.Amqp:
-					return await _synchronousServiceBusSender.SendAsync(logger, message).ConfigureAwait(false);
+					return await _synchronousServiceBusSender.SendAsync(logger, message);
 				case DeliveryProtocol.Unknown:
 				default:
                     throw new MessagingException("Invalid delivery protocol: " + message.MessageFunction)
@@ -95,7 +95,7 @@ namespace Helsenorge.Messaging
 				? message.MessageFunction
 				: message.ReceiptForMessageFunction;
 
-			var profile = await FindProfile(logger, message).ConfigureAwait(false);
+			var profile = await FindProfile(logger, message);
 			var collaborationProtocolMessage = profile?.FindMessageForReceiver(messageFunction);
 
             if ((profile != null && profile.Name == Registries.CollaborationProtocolRegistry.DummyPartyName)
@@ -138,8 +138,8 @@ namespace Helsenorge.Messaging
 		private async Task<CollaborationProtocolProfile> FindProfile(ILogger logger, OutgoingMessage message)
 		{
 			var profile = 
-				await CollaborationProtocolRegistry.FindAgreementForCounterpartyAsync(logger, message.ToHerId).ConfigureAwait(false) ??
-				await CollaborationProtocolRegistry.FindProtocolForCounterpartyAsync(logger, message.ToHerId).ConfigureAwait(false);
+				await CollaborationProtocolRegistry.FindAgreementForCounterpartyAsync(logger, message.ToHerId) ??
+				await CollaborationProtocolRegistry.FindProtocolForCounterpartyAsync(logger, message.ToHerId);
 			return profile;
 		}
 	}

@@ -118,7 +118,7 @@ namespace Helsenorge.Messaging.ServiceBus.Receivers
             IMessagingMessage message;
             try
             {
-                message = await _messageReceiver.ReceiveAsync(ReadTimeout).ConfigureAwait(false);
+                message = await _messageReceiver.ReceiveAsync(ReadTimeout);
             }
             catch (Exception ex)
             {
@@ -127,7 +127,7 @@ namespace Helsenorge.Messaging.ServiceBus.Receivers
                     EventId = EventIds.Receive
                 };
             }
-            return await HandleRawMessage(message, alwaysRemoveMessage).ConfigureAwait(false);
+            return await HandleRawMessage(message, alwaysRemoveMessage);
         }
         private async Task<IncomingMessage> HandleRawMessage(IMessagingMessage message, bool alwaysRemoveMessage)
         {
@@ -153,7 +153,7 @@ namespace Helsenorge.Messaging.ServiceBus.Receivers
 
                 ValidateMessageHeader(message);
                 // we need the certificates for decryption and certificate use
-                incomingMessage.CollaborationAgreement = await ResolveProfile(message).ConfigureAwait(false);
+                incomingMessage.CollaborationAgreement = await ResolveProfile(message);
 
                 var payload = HandlePayload(message, bodyStream, message.ContentType, incomingMessage);
                 if (payload != null)
@@ -233,13 +233,13 @@ namespace Helsenorge.Messaging.ServiceBus.Receivers
 
             if (Guid.TryParse(message.CpaId, out id) && (id != Guid.Empty))
             {
-                return await Core.CollaborationProtocolRegistry.FindAgreementByIdAsync(Logger, id).ConfigureAwait(false);
+                return await Core.CollaborationProtocolRegistry.FindAgreementByIdAsync(Logger, id);
             }
             return
                 // try first to find an agreement
-                await Core.CollaborationProtocolRegistry.FindAgreementForCounterpartyAsync(Logger, message.FromHerId).ConfigureAwait(false) ??
+                await Core.CollaborationProtocolRegistry.FindAgreementForCounterpartyAsync(Logger, message.FromHerId) ??
                 // if we cannot find that, we fallback to protocol (which may return a dummy protocol if things are really missing in AR)
-                await Core.CollaborationProtocolRegistry.FindProtocolForCounterpartyAsync(Logger, message.FromHerId).ConfigureAwait(false);
+                await Core.CollaborationProtocolRegistry.FindProtocolForCounterpartyAsync(Logger, message.FromHerId);
         }
 
         private XDocument HandlePayload(IMessagingMessage originalMessage, Stream bodyStream, string contentType, IncomingMessage incomingMessage)

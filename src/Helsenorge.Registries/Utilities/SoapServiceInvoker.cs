@@ -48,7 +48,7 @@ namespace Helsenorge.Registries.Utilities
 				logger.LogInformation("Start-ServiceCall: {OperationName} {Address}", 
 					operationName, factory.Endpoint.Address.Uri.AbsoluteUri);
 
-				response = await action(channel).ConfigureAwait(false);
+				response = await action(channel);
 
 				logger.LogInformation("End-ServiceCall: {OperationName} {Address}",
 					operationName, factory.Endpoint.Address.Uri.AbsoluteUri);

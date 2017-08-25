@@ -74,7 +74,7 @@ namespace Helsenorge.Registries
 			logger.LogDebug($"FindProtocolForCounterpartyAsync {counterpartyHerId}");
 
 			var key = $"CPA_FindProtocolForCounterpartyAsync_{counterpartyHerId}";
-			var result = await CacheExtensions.ReadValueFromCache<CollaborationProtocolProfile>(logger, _cache, key).ConfigureAwait(false);
+			var result = await CacheExtensions.ReadValueFromCache<CollaborationProtocolProfile>(logger, _cache, key);
 			var xmlString = string.Empty;
 
 			if (result != null)
@@ -90,7 +90,7 @@ namespace Helsenorge.Registries
 			}
 			try
 			{
-				xmlString = await FindProtocolForCounterparty(logger, counterpartyHerId).ConfigureAwait(false);
+				xmlString = await FindProtocolForCounterparty(logger, counterpartyHerId);
 			}
 			catch (FaultException<CPAService.GenericFault> ex)
 			{
@@ -117,7 +117,7 @@ namespace Helsenorge.Registries
                 result = doc.Root == null ? null : MapFrompartyInfo(doc.Root.Element(_ns + "PartyInfo"));
             }
 
-			await CacheExtensions.WriteValueToCache(logger, _cache, key, result, _settings.CachingInterval).ConfigureAwait(false);
+			await CacheExtensions.WriteValueToCache(logger, _cache, key, result, _settings.CachingInterval);
 			return result;
 		}
 
@@ -142,7 +142,7 @@ namespace Helsenorge.Registries
 			logger.LogDebug($"FindAgreementByIdAsync {id}");
 
 			var key = $"CPA_FindAgreementByIdAsync_{id}";
-			var result = await CacheExtensions.ReadValueFromCache<CollaborationProtocolProfile>(logger, _cache, key).ConfigureAwait(false);
+			var result = await CacheExtensions.ReadValueFromCache<CollaborationProtocolProfile>(logger, _cache, key);
 
 			if (result != null)
 			{
@@ -160,7 +160,7 @@ namespace Helsenorge.Registries
 
 			try
 			{
-				details = await FindAgreementById(logger, id).ConfigureAwait(false);
+				details = await FindAgreementById(logger, id);
 			}
 			catch (FaultException ex)
 			{
@@ -182,7 +182,7 @@ namespace Helsenorge.Registries
 			result = MapFrompartyInfo(node);
 			result.CpaId = id;
 
-			await CacheExtensions.WriteValueToCache(logger, _cache, key, result, _settings.CachingInterval).ConfigureAwait(false);
+			await CacheExtensions.WriteValueToCache(logger, _cache, key, result, _settings.CachingInterval);
 			return result;
 		}
 
@@ -207,7 +207,7 @@ namespace Helsenorge.Registries
 			logger.LogDebug($"Start-FindAgreementForCounterpartyAsync {counterpartyHerId}");
 
 			var key = $"CPA_FindAgreementForCounterpartyAsync_{_settings.MyHerId}_{counterpartyHerId}";
-			var result = await CacheExtensions.ReadValueFromCache<CollaborationProtocolProfile>(logger, _cache, key).ConfigureAwait(false);
+			var result = await CacheExtensions.ReadValueFromCache<CollaborationProtocolProfile>(logger, _cache, key);
 
 			if (result != null)
 			{
@@ -226,7 +226,7 @@ namespace Helsenorge.Registries
 			try
 			{
                 logger.LogDebug($"StartServiceCall-FindAgreementForCounterparty {counterpartyHerId}");
-				details = await FindAgreementForCounterparty(logger, counterpartyHerId).ConfigureAwait(false);
+				details = await FindAgreementForCounterparty(logger, counterpartyHerId);
                 logger.LogDebug($"EndServiceCall-FindAgreementForCounterparty {counterpartyHerId}");
             }
 			catch (FaultException ex)
@@ -247,7 +247,7 @@ namespace Helsenorge.Registries
             result = MapFrompartyInfo(node);
             result.CpaId = Guid.Parse(doc.Root.Attribute(_ns + "cpaid").Value);
             
-			await CacheExtensions.WriteValueToCache(logger, _cache, key, result, _settings.CachingInterval).ConfigureAwait(false);
+			await CacheExtensions.WriteValueToCache(logger, _cache, key, result, _settings.CachingInterval);
 
             logger.LogDebug($"End-FindAgreementForCounterpartyAsync {counterpartyHerId}");
 

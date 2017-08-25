@@ -66,7 +66,7 @@ namespace Helsenorge.Registries.Mocks
 			{
 				return default(CommunicationParty);
 			}
-			return await Task.FromResult(Utils.Deserialize<CommunicationParty>(xml)).ConfigureAwait(false);
+			return await Task.FromResult(Utils.Deserialize<CommunicationParty>(xml));
 		}
 
         internal override async Task<CertificateDetails> GetCertificateDetailsForEncryptionInternal(ILogger logger, int herId)
@@ -76,7 +76,7 @@ namespace Helsenorge.Registries.Mocks
             {
                 return default(CertificateDetails);
             }
-            return await Task.FromResult(Utils.Deserialize<CertificateDetails>(xml)).ConfigureAwait(false);
+            return await Task.FromResult(Utils.Deserialize<CertificateDetails>(xml));
         }
 
         internal override async Task<CertificateDetails> GetCertificateDetailsForValidatingSignatureInternal(ILogger logger, int herId)
@@ -86,7 +86,7 @@ namespace Helsenorge.Registries.Mocks
             {
                 return default(CertificateDetails);
             }
-            return await Task.FromResult(Utils.Deserialize<CertificateDetails>(xml)).ConfigureAwait(false);
+            return await Task.FromResult(Utils.Deserialize<CertificateDetails>(xml));
         }
     }
 }

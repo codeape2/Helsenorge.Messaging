@@ -109,11 +109,11 @@ namespace Helsenorge.Messaging.ServiceBus
 
 			var hasAgreement = true;
 			// first we try and find an agreement
-			var profile = await CollaborationProtocolRegistry.FindAgreementForCounterpartyAsync(logger, outgoingMessage.ToHerId).ConfigureAwait(false);
+			var profile = await CollaborationProtocolRegistry.FindAgreementForCounterpartyAsync(logger, outgoingMessage.ToHerId);
 			if (profile == null)
 			{
 				hasAgreement = false; // if we don't have an agreement, we try to find the specific profile
-				profile = await CollaborationProtocolRegistry.FindProtocolForCounterpartyAsync(logger, outgoingMessage.ToHerId).ConfigureAwait(false);
+				profile = await CollaborationProtocolRegistry.FindProtocolForCounterpartyAsync(logger, outgoingMessage.ToHerId);
 			}
 
             logger.LogDebug($"ServiceBusCore::Send - Start retrieving and valiating certificates - correlationId: {correlationId}");
@@ -167,7 +167,7 @@ namespace Helsenorge.Messaging.ServiceBus
 			if (queueType != QueueType.SynchronousReply)
 			{
 				messagingMessage.ReplyTo = 
-					replyTo ?? await ConstructQueueName(logger, Core.Settings.MyHerId, queueType).ConfigureAwait(false);
+					replyTo ?? await ConstructQueueName(logger, Core.Settings.MyHerId, queueType);
 			}
 
             messagingMessage.ContentType = protection.ContentType;
@@ -176,7 +176,7 @@ namespace Helsenorge.Messaging.ServiceBus
 			messagingMessage.To = 
 				(queueType == QueueType.SynchronousReply) ? 
 				replyTo : 
-				await ConstructQueueName(logger, outgoingMessage.ToHerId, queueType).ConfigureAwait(false);
+				await ConstructQueueName(logger, outgoingMessage.ToHerId, queueType);
 			messagingMessage.MessageFunction = outgoingMessage.MessageFunction;
 			messagingMessage.CorrelationId = correlationId ?? outgoingMessage.MessageId;
 			messagingMessage.TimeToLive = (queueType == QueueType.Asynchronous)
@@ -193,7 +193,7 @@ namespace Helsenorge.Messaging.ServiceBus
 			}
             logger.LogDebug($"ServiceBusCore::Send - End Create and Initialize message - correlationId: {correlationId}");
 
-            await Send(logger, messagingMessage, queueType, outgoingMessage.PersonalId, (LogPayload) ? outgoingMessage.Payload : null).ConfigureAwait(false);
+            await Send(logger, messagingMessage, queueType, outgoingMessage.PersonalId, (LogPayload) ? outgoingMessage.Payload : null);
 
             logger.LogDebug($"End-ServiceBusCore::Send QueueType: {queueType} replyTo: {replyTo} correlationId: {correlationId}");
         }
@@ -221,7 +221,7 @@ namespace Helsenorge.Messaging.ServiceBus
                 logger.LogDebug("ServiceBusCore::Send - End-SenderPool::CreateCachedMessageSender");
 
                 logger.LogDebug("ServiceBusCore::Send - Start-MessageSender::SendAsync");
-                await messageSender.SendAsync(message).ConfigureAwait(false);
+                await messageSender.SendAsync(message);
                 logger.LogDebug("ServiceBusCore::Send - End-MessageSender::SendAsync");
             }
 			catch (Exception ex)
@@ -307,7 +307,7 @@ namespace Helsenorge.Messaging.ServiceBus
 				}
 			}
 			logger.LogError("Reporting error to sender. ErrorCode: {0} ErrorDescription: {1} AdditionalData: {2}", errorCode, errorDescription, additionDataValue);
-			await Send(logger, clonedMessage, QueueType.Error).ConfigureAwait(false);
+			await Send(logger, clonedMessage, QueueType.Error);
 		}
 		/// <summary>
 		/// Gets the queue name that we can use on messages from a more extensive name
@@ -328,7 +328,7 @@ namespace Helsenorge.Messaging.ServiceBus
 
 		private async Task<string> ConstructQueueName(ILogger logger, int herId, QueueType type)
 		{
-			var details = await Core.AddressRegistry.FindCommunicationPartyDetailsAsync(logger, herId).ConfigureAwait(false);
+			var details = await Core.AddressRegistry.FindCommunicationPartyDetailsAsync(logger, herId);
 			if (details == null)
 			{
 				throw new MessagingException("Could not find sender in address registry")

@@ -27,7 +27,7 @@ namespace Helsenorge.Messaging.ServiceBus
 			var brokeredMessage = message.OriginalObject as BrokeredMessage;
 			if(brokeredMessage == null) throw new InvalidOperationException("OriginalObject is not a Brokered message");
 
-			await _implementation.SendAsync(brokeredMessage).ConfigureAwait(false);
+			await _implementation.SendAsync(brokeredMessage);
 		}
 		bool ICachedMessagingEntity.IsClosed => _implementation.IsClosed;
 		void ICachedMessagingEntity.Close() => _implementation.Close();

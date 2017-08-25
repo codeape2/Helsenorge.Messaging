@@ -46,13 +46,13 @@ namespace Helsenorge.Registries
 		public async Task<CommunicationPartyDetails> FindCommunicationPartyDetailsAsync(ILogger logger, int herId)
 		{
 			var key = $"AR_FindCommunicationPartyDetailsAsync_{herId}";
-			var party = await CacheExtensions.ReadValueFromCache<CommunicationParty>(logger, _cache, key).ConfigureAwait(false);
+			var party = await CacheExtensions.ReadValueFromCache<CommunicationParty>(logger, _cache, key);
 
 			if (party == null)
 			{
 				try
 				{
-					party = await FindCommunicationPartyDetails(logger, herId).ConfigureAwait(false);
+					party = await FindCommunicationPartyDetails(logger, herId);
 				}
 				catch (FaultException ex)
 				{
@@ -62,7 +62,7 @@ namespace Helsenorge.Registries
 						Data = { { "HerId", herId } }
 					};
 				}
-				await CacheExtensions.WriteValueToCache(logger, _cache, key, party, _settings.CachingInterval).ConfigureAwait(false);
+				await CacheExtensions.WriteValueToCache(logger, _cache, key, party, _settings.CachingInterval);
 			}
 			return party == null ? default(CommunicationPartyDetails) : MapCommunicationPartyDetails(party);
 		}
@@ -76,13 +76,13 @@ namespace Helsenorge.Registries
         public async Task<Abstractions.CertificateDetails> GetCertificateDetailsForEncryptionAsync(ILogger logger, int herId)
         {
             var key = $"AR_GetCertificateDetailsForEncryption{herId}";
-            var certificateDetails = await CacheExtensions.ReadValueFromCache<AddressService.CertificateDetails>(logger, _cache, key).ConfigureAwait(false);
+            var certificateDetails = await CacheExtensions.ReadValueFromCache<AddressService.CertificateDetails>(logger, _cache, key);
 
             if(certificateDetails == null)
             {
                 try
                 {
-                    certificateDetails = await GetCertificateDetailsForEncryptionInternal(logger, herId).ConfigureAwait(false);
+                    certificateDetails = await GetCertificateDetailsForEncryptionInternal(logger, herId);
                 }
                 catch(FaultException ex)
                 {
@@ -92,7 +92,7 @@ namespace Helsenorge.Registries
                         Data = { { "HerId", herId } }
                     };
                 }
-                await CacheExtensions.WriteValueToCache(logger, _cache, key, certificateDetails, _settings.CachingInterval).ConfigureAwait(false);
+                await CacheExtensions.WriteValueToCache(logger, _cache, key, certificateDetails, _settings.CachingInterval);
             }
             return certificateDetails == null ? default(Abstractions.CertificateDetails) : MapCertificateDetails(herId, certificateDetails);
         }
@@ -106,13 +106,13 @@ namespace Helsenorge.Registries
         public async Task<Abstractions.CertificateDetails> GetCertificateDetailsForValidatingSignatureAsync(ILogger logger, int herId)
         {
             var key = $"AR_GetCertificateDetailsForValidationSignature{herId}";
-            var certificateDetails = await CacheExtensions.ReadValueFromCache<AddressService.CertificateDetails>(logger, _cache, key).ConfigureAwait(false);
+            var certificateDetails = await CacheExtensions.ReadValueFromCache<AddressService.CertificateDetails>(logger, _cache, key);
 
             if (certificateDetails == null)
             {
                 try
                 {
-                    certificateDetails = await GetCertificateDetailsForValidatingSignatureInternal(logger, herId).ConfigureAwait(false);
+                    certificateDetails = await GetCertificateDetailsForValidatingSignatureInternal(logger, herId);
                 }
                 catch (FaultException ex)
                 {
@@ -122,7 +122,7 @@ namespace Helsenorge.Registries
                         Data = { { "HerId", herId } }
                     };
                 }
-                await CacheExtensions.WriteValueToCache(logger, _cache, key, certificateDetails, _settings.CachingInterval).ConfigureAwait(false);
+                await CacheExtensions.WriteValueToCache(logger, _cache, key, certificateDetails, _settings.CachingInterval);
             }
             return certificateDetails == null ? default(Abstractions.CertificateDetails) : MapCertificateDetails(herId, certificateDetails);
         }

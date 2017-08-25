@@ -18,7 +18,7 @@ namespace Helsenorge.Messaging.ServiceBus
 		}
 		public async Task<IMessagingMessage> ReceiveAsync(TimeSpan serverWaitTime)
 		{
-			var message = await _implementation.ReceiveAsync(serverWaitTime).ConfigureAwait(false);
+			var message = await _implementation.ReceiveAsync(serverWaitTime);
 			return message != null ? new ServiceBusMessage(message) : null;
 		}
 		bool ICachedMessagingEntity.IsClosed => _implementation.IsClosed;
